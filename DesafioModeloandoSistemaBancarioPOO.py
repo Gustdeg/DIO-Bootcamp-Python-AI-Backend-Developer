@@ -73,7 +73,7 @@ class ContaCorrente(Conta):
 
     def sacar(self, valor):
 
-        numero_saques = len([transacao for transacao in self.historico.transacoes if transacao["tipo"] == Saque.__name__])
+        numero_saques = len([transacao for transacao in self.historico._transacoes if transacao["tipo"] == Saque.__name__])
 
         excedeu_limite = valor > self.limite
         excedeu_saques = numero_saques >= self.limite_saques
@@ -90,7 +90,7 @@ class ContaCorrente(Conta):
         return False
     
     def __str__(self):
-        return f"""\ Agência: \t{self.agencia} C/C:\t\t{self.numero} Titular:\t{self.cliente.nome}"""
+        return f"""\Agência: \t{self.agencia} C/C:\t\t{self.numero} Titular:\t{self.cliente.nome}"""
 
 class Historico:
 
@@ -104,9 +104,8 @@ class Historico:
     def adicionar_transacao(self, trasacao):
         self._transacoes.append(
             {
-                "tipo": trasacao.__class__.__nome__,
+                "tipo": trasacao.__class__.__name__,
                 "valor": trasacao.valor,
-                "data": datetime.now().strftime("%d-%m-%Y %H:%M:%s"),
             }
         )
 
@@ -118,7 +117,7 @@ class Cliente:
         self.contas = []
 
 
-    def realizar_tranzacao(self, conta, transacao):
+    def realisar_transacao(self, conta, transacao):
 
         transacao.registrar(conta)
     
@@ -218,7 +217,7 @@ def depositar(clientes):
     if not conta:
         return
 
-    cliente.realizar_transacao(conta, transacao)
+    cliente.realisar_transacao(conta, transacao)
 
 
 def sacar(clientes):
@@ -236,7 +235,7 @@ def sacar(clientes):
     if not conta:
         return
 
-    cliente.realizar_transacao(conta, transacao)
+    cliente.realisar_transacao(conta, transacao)
 
 
 def exibir_extrato(clientes):
@@ -252,7 +251,7 @@ def exibir_extrato(clientes):
         return
 
     print("\n================ EXTRATO ================")
-    transacoes = conta.historico.transacoes
+    transacoes = conta.historico._transacoes
 
     extrato = ""
     if not transacoes:
